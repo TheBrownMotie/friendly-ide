@@ -12,15 +12,79 @@ public class Cursor
         this.col = 0;
     }
     
-    public int getRow() { return row;  }
-    public int getCol() { return col; }
+    public int getRow()
+    {
+        return row;
+    }
     
-    public Cursor right()   { col++; return this; }
-    public Cursor down()    { row++; return this; }
-    public Cursor up()      { row--; return this; }
-    public Cursor left()    { col--; return this; }
+    public int getCol()
+    {
+        return col;
+    }
     
-    public Cursor home()    { col = 0; return this; }
+    public Cursor right(int maxRow, int maxCol)
+    {
+        if(col + 1 > maxCol && row < maxRow)
+        {
+            col = 0;
+            row++;
+        }
+        else if(col + 1 <= maxCol)
+        {
+            col++;
+        }
+        
+        return this; 
+    }
+    
+    public Cursor down(int maxRow, int nextLineMaxCol)
+    {
+        if(row + 1 < maxRow)
+        {
+            row++;
+            if(col > nextLineMaxCol)
+                col = nextLineMaxCol;
+        }
+        return this;
+    }
+    
+    public Cursor up(int prevLineMaxCol)
+    {
+        if(row - 1 >= 0)
+        {
+            row--;
+            if(col > prevLineMaxCol)
+                col = prevLineMaxCol;
+        }
+        return this;
+    }
+    
+    public Cursor left(int prevLineMaxCol)
+    {
+        if(col - 1 < 0 && row > 0)
+        {
+            col = prevLineMaxCol;
+            row--;
+        }
+        else if(col - 1 >= 0)
+        {
+            col--;
+        }
+        
+        return this;
+    }
+    
+    public Cursor home()
+    {
+        col = 0;
+        return this;
+    }
+    
+    public Cursor end(int maxCol)
+    {
+        col = maxCol;
+        return this;
+    }
     
     public void paint(Graphics2D g, int fontSize)
     {

@@ -24,15 +24,54 @@ public class Editor extends JComponent
     public void type(char c)
     {
         lines.get(cursor.getRow()).type(c, cursor.getCol());
-        cursor.right();
+        right();
     }
     
     public void enter()
     {
         Line newLine = lines.get(cursor.getRow()).splitAt(cursor.getCol());
         lines.add(cursor.getRow()+1, newLine);
-        cursor.down().home();
+        down();
+        home();
     }
+    
+    public void left()
+    {
+        cursor.left(cols(cursor.getRow()-1));
+    }
+
+    public void right()
+    {
+        cursor.right(rows(), cols(cursor.getRow()));
+    }
+    
+    public void up()
+    {
+        cursor.up(cols(cursor.getRow()-1));
+    }
+    
+    public void down()
+    {
+        cursor.down(rows(), cols(cursor.getRow()+1));
+    }
+    
+    public void home()
+    {
+        cursor.home();
+    }
+    
+    public void end()
+    {
+        cursor.end(cols(cursor.getRow()));
+    }
+
+    public void delete()
+    {
+        lines.get(cursor.getRow()).remove(cursor.getCol());
+    }
+    
+    private int rows() { return lines.size(); }
+    private int cols(int row) { return row < 0 || row >= rows() ? 0 : lines.get(row).size(); }
     
     @Override
     public void paintComponent(Graphics g)

@@ -41,6 +41,8 @@ public class IDE extends JFrame implements KeyListener
     {
         if(e.getKeyChar() == KeyEvent.VK_ENTER)
             editors.get(visibleEditor).enter();
+        else if(e.getKeyChar() == KeyEvent.VK_DELETE)
+            editors.get(visibleEditor).delete();
         else
             editors.get(visibleEditor).type(e.getKeyChar());
         editors.get(visibleEditor).repaint();
@@ -50,13 +52,17 @@ public class IDE extends JFrame implements KeyListener
     public void keyPressed(KeyEvent e)
     {
         if(e.getKeyCode() == KeyEvent.VK_UP)
-            editors.get(visibleEditor).getTextCursor().up();
+            editors.get(visibleEditor).up();
         if(e.getKeyCode() == KeyEvent.VK_DOWN)
-            editors.get(visibleEditor).getTextCursor().down();
+            editors.get(visibleEditor).down();
         if(e.getKeyCode() == KeyEvent.VK_LEFT)
-            editors.get(visibleEditor).getTextCursor().left();
+            editors.get(visibleEditor).left();
         if(e.getKeyCode() == KeyEvent.VK_RIGHT)
-            editors.get(visibleEditor).getTextCursor().right();
+            editors.get(visibleEditor).right();
+        if(e.getKeyCode() == KeyEvent.VK_HOME)
+            editors.get(visibleEditor).home();
+        if(e.getKeyCode() == KeyEvent.VK_END)
+            editors.get(visibleEditor).end();
         
         editors.get(visibleEditor).repaint();
     }

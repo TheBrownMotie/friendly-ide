@@ -21,6 +21,11 @@ class Line
         this.characters = new ArrayList<>(chars);
     }
     
+    public int size()
+    {
+        return characters.size();
+    }
+    
     public void paint(Graphics2D g, int fontSize, int x, int y)
     {
         int charWidth = Character.getWidth(g, fontSize);
@@ -43,8 +48,13 @@ class Line
     public void type(char c, int col)
     {
         Character character = new Character(c, Color.BLACK, Color.WHITE, false, false, false);
-        if(col >= characters.size())
+        if(col <= characters.size())
             characters.add(col, character);
+    }
+    
+    public void remove(int col)
+    {
+        characters.remove(col);
     }
     
     public Line splitAt(int col)
