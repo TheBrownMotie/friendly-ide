@@ -17,7 +17,21 @@ public class Editor extends JComponent
     public Editor()
     {
         lines = new ArrayList<>();
+        lines.add(new Line());
         cursor = new Cursor();
+    }
+    
+    public void type(char c)
+    {
+        lines.get(cursor.getRow()).type(c, cursor.getCol());
+        cursor.right();
+    }
+    
+    public void enter()
+    {
+        Line newLine = lines.get(cursor.getRow()).splitAt(cursor.getCol());
+        lines.add(cursor.getRow()+1, newLine);
+        cursor.down().home();
     }
     
     @Override
@@ -29,5 +43,10 @@ public class Editor extends JComponent
         for(Line line : lines)
             line.paint(g2, fontSize, 0, y += lineHeight);
         cursor.paint(g2, fontSize);
+    }
+    
+    public Cursor getTextCursor()
+    {
+        return cursor;
     }
 }

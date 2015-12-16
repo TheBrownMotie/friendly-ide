@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
@@ -15,10 +16,16 @@ class Line
         this.characters = new ArrayList<>();
     }
     
+    private Line(List<Character> chars)
+    {
+        this.characters = new ArrayList<>(chars);
+    }
+    
     public void paint(Graphics2D g, int fontSize, int x, int y)
     {
         int charWidth = Character.getWidth(g, fontSize);
         
+        x -= charWidth;
         for(Character character : characters)
             character.paint(g, fontSize, x += charWidth, y);
     }
@@ -31,5 +38,19 @@ class Line
     public String toString()
     {
         return characters.stream().map(Character::toString).collect(Collectors.joining());
+    }
+
+    public void type(char c, int col)
+    {
+        Character character = new Character(c, Color.BLACK, Color.WHITE, false, false, false);
+        if(col >= characters.size())
+            characters.add(col, character);
+    }
+    
+    public Line splitAt(int col)
+    {
+        List<Character> newLineCharacters = characters.subList(col, characters.size());
+        this.characters = characters.subList(0, col);
+        return new Line(newLineCharacters);
     }
 }

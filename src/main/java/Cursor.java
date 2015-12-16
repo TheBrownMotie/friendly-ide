@@ -12,15 +12,15 @@ public class Cursor
         this.col = 0;
     }
     
-    public int getRow() 
-    {
-        return row; 
-    }
+    public int getRow() { return row;  }
+    public int getCol() { return col; }
     
-    public int getCol() 
-    {
-        return col; 
-    }
+    public Cursor right()   { col++; return this; }
+    public Cursor down()    { row++; return this; }
+    public Cursor up()      { row--; return this; }
+    public Cursor left()    { col--; return this; }
+    
+    public Cursor home()    { col = 0; return this; }
     
     public void paint(Graphics2D g, int fontSize)
     {
