@@ -57,18 +57,24 @@ public class Editor extends JComponent
     
     public void rightToken()
     {
-        if(cursor.getCol() == cols())
+        Character.TokenType tokenType = currentCharacter().getTokenType();
+        if(isAtEnd())
             return;
-        final Character.TokenType tokenType = currentCharacter().getTokenType();
+        
+        if(cursor.getCol() == cols())
+            right();
         while(cursor.getCol() < cols() && currentCharacter().getTokenType() == tokenType)
             right();
     }
     
     public void leftToken()
     {
-        if(cursor.getCol() == 0)
+        Character.TokenType tokenType = previousCharacter().getTokenType();
+        if(isAtBeginning())
             return;
-        final Character.TokenType tokenType = previousCharacter().getTokenType();
+        
+        if(cursor.getCol() == 0)
+            left();
         while(cursor.getCol() > 0 && previousCharacter().getTokenType() == tokenType)
             left();
     }
@@ -115,13 +121,23 @@ public class Editor extends JComponent
     {
         if (cols() == cursor.getCol() && currentRow() < lines.size() - 1)
             lines.set(currentRow(), new Line(currentLine(), lines.remove(nextRow())));
-        else
+        else if(!isAtEnd())
             currentLine().remove(cursor.getCol());
     }
     
     public Cursor getTextCursor()
     {
         return cursor;
+    }
+    
+    private boolean isAtBeginning()
+    {
+        return cursor.getRow() == 0 && cursor.getCol() == 0;
+    }
+    
+    private boolean isAtEnd()
+    {
+        return cursor.getRow() >= rows() - 1 && cursor.getCol() >= cols();
     }
     
     private int rows()
@@ -161,11 +177,15 @@ public class Editor extends JComponent
     
     private Character currentCharacter()
     {
+        if(cursor.getCol() >= cols())
+            return Character.NEWLINE;
         return lines.get(cursor.getRow()).get(cursor.getCol());
     }
     
     private Character previousCharacter()
     {
+        if(cursor.getCol() <= 0)
+            return Character.NEWLINE;
         return lines.get(cursor.getRow()).get(cursor.getCol() - 1);
     }
     

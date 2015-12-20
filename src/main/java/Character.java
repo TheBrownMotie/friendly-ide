@@ -19,6 +19,8 @@ public final class Character
         }
     }
     
+    public static final Character NEWLINE = new Character('\n', null, null, false, false, false);
+    
     private final char c;
     private final TokenType type;
     private Color fontColor, highlight;

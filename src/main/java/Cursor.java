@@ -21,7 +21,7 @@ public class Cursor
     
     public Cursor right(int maxRow, int maxCol)
     {
-        if(col + 1 > maxCol && row < maxRow)
+        if(col + 1 > maxCol && row < maxRow - 1)
         {
             col = 0;
             row++;
