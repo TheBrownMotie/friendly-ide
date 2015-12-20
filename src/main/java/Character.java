@@ -51,13 +51,15 @@ public final class Character
     
     public void paint(Graphics2D g, int fontSize, int x, int y)
     {
+        int w = Character.getWidth(g, fontSize);
+        int h = Line.getHeight(g, fontSize);
+
         g.setFont(getFont(fontSize));
+        g.setColor(highlight);
+        g.fillRect(x, y - h + 1, w, h + 1);
         g.setColor(fontColor);
-        g.setBackground(highlight);
         g.drawString(c + "", x, y);
         
-        int w = g.getFontMetrics().stringWidth(c + "");
-        int h = g.getFontMetrics().getHeight();
         if(isStrikethrough)
             g.drawLine(x, y - (h/2), x + w, y - (h/2));
     }

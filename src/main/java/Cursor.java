@@ -1,6 +1,3 @@
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 
 public class Cursor
 {
@@ -84,13 +81,5 @@ public class Cursor
     {
         col = maxCol;
         return this;
-    }
-    
-    public void paint(Graphics2D g, int fontSize)
-    {
-        g.setColor(Color.BLACK);
-        int rowHeight = Line.getHeight(fontSize, g.getFontRenderContext());
-        int colWidth = Character.getWidth(g, fontSize);
-        g.drawLine(col * colWidth, row * rowHeight, col * colWidth, (row + 1) * rowHeight);
     }
 }

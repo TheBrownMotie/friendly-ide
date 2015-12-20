@@ -1,11 +1,8 @@
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 class Line
 {
@@ -35,9 +32,9 @@ class Line
             character.paint(g, fontSize, x += charWidth, y);
     }
     
-    public static int getHeight(int fontSize, FontRenderContext context)
+    public static int getHeight(Graphics2D g, int fontSize)
     {
-        return (int)new Font(Font.MONOSPACED, Font.PLAIN, fontSize).getLineMetrics(" ", context).getHeight();
+        return g.getFontMetrics().getHeight() / 2;
     }
     
     public String toString()
