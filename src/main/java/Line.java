@@ -29,13 +29,9 @@ class Line
         return characters.size();
     }
     
-    public void paint(Graphics2D g, int fontSize, int x, int y)
+    public List<Character> characters()
     {
-        int charWidth = Character.getWidth(g, fontSize);
-        
-        x -= charWidth;
-        for(Character character : characters)
-            character.paint(g, fontSize, x += charWidth, y);
+        return characters;
     }
     
     public static int getHeight(Graphics2D g, int fontSize)

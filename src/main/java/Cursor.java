@@ -1,5 +1,7 @@
+import java.util.Objects;
 
-public class Cursor
+
+public class Cursor implements Comparable<Cursor>
 {
     private int row, col;
     
@@ -7,6 +9,30 @@ public class Cursor
     {
         this.row = 0;
         this.col = 0;
+    }
+    
+    public Cursor(Cursor that)
+    {
+        this.row = that.row;
+        this.col = that.col;
+    }
+    
+    public Cursor(int row, int col)
+    {
+        this.row = row;
+        this.col = col;
+    }
+
+    public static boolean isBetween(Cursor c1, Cursor c2, Cursor test)
+    {
+        if(c1 == null || c2 == null || test == null)
+            return false;
+        if(c1.equals(c2))
+            return false;
+        
+        Cursor first = c1.compareTo(c2) < 0 ? c1 : c2;
+        Cursor second = c1.compareTo(c2) < 0 ? c2 : c1;
+        return first.compareTo(test) <= 0 && test.compareTo(second) < 0;
     }
     
     public int getRow()
@@ -81,5 +107,36 @@ public class Cursor
     {
         col = maxCol;
         return this;
+    }
+
+    @Override
+    public int compareTo(Cursor that)
+    {
+        if(this.row != that.row)
+            return Integer.compare(this.row, that.row);
+        return Integer.compare(this.col, that.col);
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        if(o == this)
+            return true;
+        if(!(o instanceof Cursor))
+            return false;
+        Cursor that = (Cursor)o;
+        return this.row == that.row && this.col == that.col;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.row, this.col);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "(" + row + ", " + col + ")";
     }
 }

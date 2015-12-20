@@ -40,38 +40,44 @@ public class IDE extends JFrame implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
+        Editor editor = editors.get(visibleEditor);
+        
         boolean control = (e.getModifiers() & KeyEvent.CTRL_MASK) != 0;
         
-        if((control && e.getKeyCode() == KeyEvent.VK_W) || e.getKeyCode() == KeyEvent.VK_UP)
-            editors.get(visibleEditor).up(1);
+        if(e.getKeyCode() == KeyEvent.VK_ALT)
+        {
+            editor.mark();
+            e.consume();
+        }
+        else if((control && e.getKeyCode() == KeyEvent.VK_W) || e.getKeyCode() == KeyEvent.VK_UP)
+            editor.up(1);
         else if((control && e.getKeyCode() == KeyEvent.VK_S) || e.getKeyCode() == KeyEvent.VK_DOWN)
-            editors.get(visibleEditor).down(1);
+            editor.down(1);
         else if((control && e.getKeyCode() == KeyEvent.VK_A) || e.getKeyCode() == KeyEvent.VK_LEFT)
-            editors.get(visibleEditor).left();
+            editor.left();
         else if((control && e.getKeyCode() == KeyEvent.VK_D) || e.getKeyCode() == KeyEvent.VK_RIGHT)
-            editors.get(visibleEditor).right();
+            editor.right();
         else if(control && e.getKeyCode() == KeyEvent.VK_L)
-            editors.get(visibleEditor).rightToken();
+            editor.rightToken();
         else if(control && e.getKeyCode() == KeyEvent.VK_J)
-            editors.get(visibleEditor).leftToken();
+            editor.leftToken();
         else if(control && e.getKeyCode() == KeyEvent.VK_I)
-            editors.get(visibleEditor).up(4);
+            editor.up(4);
         else if(control && e.getKeyCode() == KeyEvent.VK_K)
-            editors.get(visibleEditor).down(4);
+            editor.down(4);
         else if(e.getKeyCode() == KeyEvent.VK_HOME)
-            editors.get(visibleEditor).home();
+            editor.home();
         else if(e.getKeyCode() == KeyEvent.VK_END)
-            editors.get(visibleEditor).end();
+            editor.end();
         else if(e.getKeyCode() == KeyEvent.VK_DELETE)
-            editors.get(visibleEditor).delete();
+            editor.delete();
         else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
-            editors.get(visibleEditor).backspace();
+            editor.backspace();
         else if(e.getKeyCode() == KeyEvent.VK_ENTER)
-            editors.get(visibleEditor).enter();
+            editor.enter();
         else if(java.lang.Character.isDefined(e.getKeyChar()) && (e.getModifiers() == 0 || e.getModifiers() == InputEvent.SHIFT_MASK))
-            editors.get(visibleEditor).type(e.getKeyChar());
-        
-        editors.get(visibleEditor).repaint();
+            editor.type(e.getKeyChar());
+        editor.repaint();
     }
     
     @Override 

@@ -23,7 +23,7 @@ public final class Character
     
     private final char c;
     private final TokenType type;
-    private Color fontColor, highlight;
+    private Color fontColor;
     private boolean isBold, isItalics, isStrikethrough;
     
     public Character(char c, Color fontColor, Color highlight, boolean isBold, boolean isItalics, boolean isStrikethrough)
@@ -32,7 +32,6 @@ public final class Character
         this.type = TokenType.get(c);
         
         this.fontColor = fontColor;
-        this.highlight = highlight;
         this.isBold = isBold;
         this.isItalics = isItalics;
         this.isStrikethrough = isStrikethrough;
@@ -48,14 +47,14 @@ public final class Character
         return g.getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, fontSize)).stringWidth(" ");
     }
     
+    public static int getMaxDescent(Graphics2D g, int fontSize)
+    {
+        return g.getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, fontSize)).getDescent();
+    }
+    
     public void setFontColor(Color fontColor)
     {
         this.fontColor = fontColor;
-    }
-
-    public void setHighlight(Color highlight)
-    {
-        this.highlight = highlight;
     }
     
     public void setBold(boolean isBold)
@@ -79,8 +78,7 @@ public final class Character
         int h = Line.getHeight(g, fontSize);
 
         g.setFont(getFont(fontSize));
-        g.setColor(highlight);
-        g.fillRect(x, y - h + 1, w, h + 1);
+        
         g.setColor(fontColor);
         g.drawString(c + "", x, y);
         

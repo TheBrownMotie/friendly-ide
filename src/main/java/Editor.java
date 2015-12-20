@@ -15,12 +15,14 @@ public class Editor extends JComponent
     
     private List<Line> lines;
     private Cursor cursor;
+    private Cursor highlightStart;
     
     public Editor()
     {
         lines = new ArrayList<>();
         lines.add(new Line());
         cursor = new Cursor();
+        highlightStart = null;
     }
     
     @Override
@@ -31,14 +33,68 @@ public class Editor extends JComponent
         g2.setColor(background);
         g2.fillRect(0, 0, this.getWidth(), this.getHeight());
         
-        int y = 0;
-        final int lineHeight = getLineHeight(g2);
+        final int lineHeight = getLineHeight(g2) + 1;
+        final int charWidth = Character.getWidth(g2, fontSize);
+        final int maxDescent = Character.getMaxDescent(g2, fontSize) - 1;
+        System.out.println(maxDescent);
+        int y = lineHeight;
+        int row = 0;
         for (Line line : lines)
-            line.paint(g2, fontSize, 0, y += lineHeight);
-        
-        final int colWidth = getColWidth(g2);
-        g.setColor(Color.BLACK);
-        g.drawLine(cursor.getCol() * colWidth, cursor.getRow() * lineHeight, cursor.getCol() * colWidth, (cursor.getRow() + 1) * lineHeight);
+        {
+            int x = 0;
+            int col = 0;
+            for(Character character : line.characters())
+            {
+                boolean highlight = Cursor.isBetween(highlightStart, cursor, new Cursor(row, col));
+                drawBackground(g2, x, y + maxDescent, charWidth, lineHeight, highlight ? Color.BLUE : Color.WHITE);
+                character.paint(g2, fontSize, x, y);
+                drawCursors(g2, x, y - lineHeight + maxDescent, lineHeight, new Cursor(row, col), cursor, highlightStart);
+                
+                col++;
+                x += charWidth;
+            }
+            
+            drawCursors(g2, x, y - lineHeight + maxDescent, lineHeight, new Cursor(row, col), cursor, highlightStart);
+            y += lineHeight;
+            row++;
+        }
+    }
+    
+    private void drawBackground(Graphics2D g, int x, int y, int w, int h, Color c)
+    {
+        g.setColor(lighten(lighten(c)));
+        g.fillRect(x, y - h, w, h);
+        g.setColor(c);
+        g.drawLine(x, y - h, x + w, y - h);
+        g.drawLine(x, y, x + w, y);
+    }
+    
+    private Color lighten(Color c)
+    {
+        return new Color(
+                Math.min(255, c.getRed() + 50),
+                Math.min(255, c.getGreen() + 50),
+                Math.min(255, c.getBlue() + 50));
+    }
+    
+    private void drawCursors(Graphics2D g, final int x, final int y, final int lineHeight, Cursor position, Cursor... cursors)
+    {
+        for(Cursor c : cursors)
+        {
+            if(c != null && c.equals(position))
+            {
+                g.setColor(Color.BLACK);
+                g.drawLine(x, y, x, y + lineHeight);
+            }
+        }
+    }
+    
+    public void mark()
+    {
+        if(highlightStart == null)
+            highlightStart = new Cursor(cursor);
+        else
+            highlightStart = null;
     }
     
     public void type(char c)
@@ -192,10 +248,5 @@ public class Editor extends JComponent
     private int getLineHeight(Graphics2D g2)
     {
         return Line.getHeight(g2, fontSize) + lineSpacing;
-    }
-    
-    private int getColWidth(Graphics2D g2)
-    {
-        return Character.getWidth(g2, fontSize);
     }
 }
