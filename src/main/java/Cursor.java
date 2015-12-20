@@ -22,17 +22,12 @@ public class Cursor implements Comparable<Cursor>
         this.row = row;
         this.col = col;
     }
-
+    
     public static boolean isBetween(Cursor c1, Cursor c2, Cursor test)
     {
         if(c1 == null || c2 == null || test == null)
             return false;
-        if(c1.equals(c2))
-            return false;
-        
-        Cursor first = c1.compareTo(c2) < 0 ? c1 : c2;
-        Cursor second = c1.compareTo(c2) < 0 ? c2 : c1;
-        return first.compareTo(test) <= 0 && test.compareTo(second) < 0;
+        return new CursorRange(c1, c2).contains(test);
     }
     
     public int getRow()

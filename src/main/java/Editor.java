@@ -1,8 +1,16 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
 
@@ -36,7 +44,7 @@ public class Editor extends JComponent
         final int lineHeight = getLineHeight(g2) + 1;
         final int charWidth = Character.getWidth(g2, fontSize);
         final int maxDescent = Character.getMaxDescent(g2, fontSize) - 1;
-        System.out.println(maxDescent);
+        
         int y = lineHeight;
         int row = 0;
         for (Line line : lines)
@@ -58,6 +66,18 @@ public class Editor extends JComponent
             y += lineHeight;
             row++;
         }
+    }
+    
+    private List<Line> getText(CursorRange range)
+    {
+        if(range.getFirst().getRow() == range.getSecond().getRow())
+            return Collections.singletonList(this.lines.get(range.getFirst().getRow()).subLine(range.getFirst().getCol(), range.getSecond().getCol()));
+        List<Line> lines = new ArrayList<>();
+        lines.add(this.lines.get(range.getFirst().getRow()).subLine(range.getFirst().getCol()));
+        for(int r = range.getFirst().getRow()+1; r < range.getSecond().getRow(); r++)
+            lines.add(this.lines.get(r));
+        lines.add(this.lines.get(range.getSecond().getRow()).subLine(0, range.getSecond().getCol()));
+        return lines;
     }
     
     private void drawBackground(Graphics2D g, int x, int y, int w, int h, Color c)
@@ -92,9 +112,33 @@ public class Editor extends JComponent
     public void mark()
     {
         if(highlightStart == null)
+        {
             highlightStart = new Cursor(cursor);
+        }
         else
+        {
+            String toCopy = getText(new CursorRange(cursor, highlightStart))
+                    .stream()
+                    .map(Line::toString)
+                    .collect(Collectors.joining("\n"));
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(toCopy), null);
+            System.out.println(toCopy);
             highlightStart = null;
+        }
+    }
+    
+    public void paste()
+    {
+        try
+        {
+            String data = (String)Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+            for(char c : data.toCharArray())
+                type(c);
+        }
+        catch (HeadlessException | UnsupportedFlavorException | IOException e)
+        {
+            e.printStackTrace();
+        }
     }
     
     public void type(char c)

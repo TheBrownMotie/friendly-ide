@@ -23,6 +23,19 @@ class Line
         this.characters = new ArrayList<>(line1.characters);
         this.characters.addAll(line2.characters);
     }
+    
+    public Line subLine(int start, int end)
+    {
+        List<Character> sublist = characters.subList(start, end);
+        Line line = new Line();
+        line.characters = sublist;
+        return line;
+    }
+    
+    public Line subLine(int start)
+    {
+        return subLine(start, characters.size());
+    }
 
     public int size()
     {
