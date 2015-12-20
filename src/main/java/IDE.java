@@ -1,3 +1,4 @@
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class IDE extends JFrame implements KeyListener
             editors.get(visibleEditor).backspace();
         else if(e.getKeyCode() == KeyEvent.VK_ENTER)
             editors.get(visibleEditor).enter();
-        else if(java.lang.Character.isDefined(e.getKeyChar()) && e.getModifiers() == 0)
+        else if(java.lang.Character.isDefined(e.getKeyChar()) && (e.getModifiers() == 0 || e.getModifiers() == InputEvent.SHIFT_MASK))
             editors.get(visibleEditor).type(e.getKeyChar());
         
         editors.get(visibleEditor).repaint();
