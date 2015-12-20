@@ -5,18 +5,40 @@ import java.awt.Graphics2D;
 
 public final class Character
 {
+    public static enum TokenType
+    {
+        WHITESPACE, IDENTIFIER, SYMBOL;
+        
+        public static TokenType get(char c)
+        {
+            if(java.lang.Character.isWhitespace(c))
+                return WHITESPACE;
+            if(java.lang.Character.isJavaIdentifierPart(c))
+                return IDENTIFIER;
+            return SYMBOL;
+        }
+    }
+    
     private final char c;
+    private final TokenType type;
     private Color fontColor, highlight;
     private boolean isBold, isItalics, isStrikethrough;
     
     public Character(char c, Color fontColor, Color highlight, boolean isBold, boolean isItalics, boolean isStrikethrough)
     {
         this.c = c;
+        this.type = TokenType.get(c);
+        
         this.fontColor = fontColor;
         this.highlight = highlight;
         this.isBold = isBold;
         this.isItalics = isItalics;
         this.isStrikethrough = isStrikethrough;
+    }
+    
+    public TokenType getTokenType()
+    {
+        return type;
     }
     
     public static int getWidth(Graphics2D g, int fontSize)

@@ -49,6 +49,10 @@ public class IDE extends JFrame implements KeyListener
             editors.get(visibleEditor).left();
         else if((control && e.getKeyCode() == KeyEvent.VK_D) || e.getKeyCode() == KeyEvent.VK_RIGHT)
             editors.get(visibleEditor).right();
+        else if(control && e.getKeyCode() == KeyEvent.VK_L)
+            editors.get(visibleEditor).rightToken();
+        else if(control && e.getKeyCode() == KeyEvent.VK_J)
+            editors.get(visibleEditor).leftToken();
         else if(e.getKeyCode() == KeyEvent.VK_HOME)
             editors.get(visibleEditor).home();
         else if(e.getKeyCode() == KeyEvent.VK_END)

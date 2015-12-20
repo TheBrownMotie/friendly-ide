@@ -66,4 +66,9 @@ class Line
         this.characters = characters.subList(0, col);
         return new Line(newLineCharacters);
     }
+
+    public Character get(int col)
+    {
+        return characters.get(col);
+    }
 }
