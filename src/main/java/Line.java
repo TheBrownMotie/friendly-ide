@@ -18,6 +18,12 @@ class Line
         this.characters = new ArrayList<>(chars);
     }
     
+    public Line(Line line1, Line line2)
+    {
+        this.characters = new ArrayList<>(line1.characters);
+        this.characters.addAll(line2.characters);
+    }
+
     public int size()
     {
         return characters.size();

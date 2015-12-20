@@ -62,7 +62,14 @@ public class Editor extends JComponent
     public void down() { cursor.down(rows(), cols(cursor.getRow()+1)); }
     public void home() { cursor.home(); }
     public void end() { cursor.end(cols(cursor.getRow())); }
-    public void delete() { lines.get(cursor.getRow()).remove(cursor.getCol()); }
+    public void backspace() { cursor.left(cols(cursor.getRow()-1)); delete(); }
+    public void delete() 
+    {
+        if(lines.get(cursor.getRow()).size() == cursor.getCol() && cursor.getRow() < lines.size()-1)
+            lines.set(cursor.getRow(), new Line(lines.get(cursor.getRow()), lines.remove(cursor.getRow()+1)));
+        else
+            lines.get(cursor.getRow()).remove(cursor.getCol());
+    }
     
     public Cursor getTextCursor() { return cursor; }
     

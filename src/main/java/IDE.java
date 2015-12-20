@@ -37,37 +37,36 @@ public class IDE extends JFrame implements KeyListener
     }
     
     @Override
-    public void keyTyped(KeyEvent e)
-    {
-        if(e.getKeyChar() == KeyEvent.VK_ENTER)
-            editors.get(visibleEditor).enter();
-        else if(e.getKeyChar() == KeyEvent.VK_DELETE)
-            editors.get(visibleEditor).delete();
-        else
-            editors.get(visibleEditor).type(e.getKeyChar());
-        
-        editors.get(visibleEditor).repaint();
-    }
-    
-    @Override
     public void keyPressed(KeyEvent e)
     {
-        if(e.getKeyCode() == KeyEvent.VK_UP)
+        boolean control = (e.getModifiers() & KeyEvent.CTRL_MASK) != 0;
+        
+        if((control && e.getKeyCode() == KeyEvent.VK_W) || e.getKeyCode() == KeyEvent.VK_UP)
             editors.get(visibleEditor).up();
-        else if(e.getKeyCode() == KeyEvent.VK_DOWN)
+        else if((control && e.getKeyCode() == KeyEvent.VK_S) || e.getKeyCode() == KeyEvent.VK_DOWN)
             editors.get(visibleEditor).down();
-        else if(e.getKeyCode() == KeyEvent.VK_LEFT)
+        else if((control && e.getKeyCode() == KeyEvent.VK_A) || e.getKeyCode() == KeyEvent.VK_LEFT)
             editors.get(visibleEditor).left();
-        else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
+        else if((control && e.getKeyCode() == KeyEvent.VK_D) || e.getKeyCode() == KeyEvent.VK_RIGHT)
             editors.get(visibleEditor).right();
         else if(e.getKeyCode() == KeyEvent.VK_HOME)
             editors.get(visibleEditor).home();
         else if(e.getKeyCode() == KeyEvent.VK_END)
             editors.get(visibleEditor).end();
+        else if(e.getKeyCode() == KeyEvent.VK_DELETE)
+            editors.get(visibleEditor).delete();
+        else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+            editors.get(visibleEditor).backspace();
+        else if(e.getKeyCode() == KeyEvent.VK_ENTER)
+            editors.get(visibleEditor).enter();
+        else if(java.lang.Character.isDefined(e.getKeyChar()) && e.getModifiers() == 0)
+            editors.get(visibleEditor).type(e.getKeyChar());
         
         editors.get(visibleEditor).repaint();
     }
     
     @Override 
     public void keyReleased(KeyEvent e) {}
+    @Override 
+    public void keyTyped(KeyEvent e) {}
 }
