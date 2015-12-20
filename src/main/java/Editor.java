@@ -38,19 +38,18 @@ public class Editor extends JComponent
         
         final int colWidth = getColWidth(g2);
         g.setColor(Color.BLACK);
-        g.drawLine(cursor.getCol() * colWidth, cursor.getRow() * lineHeight, cursor.getCol() * colWidth,
-                (cursor.getRow() + 1) * lineHeight);
+        g.drawLine(cursor.getCol() * colWidth, cursor.getRow() * lineHeight, cursor.getCol() * colWidth, (cursor.getRow() + 1) * lineHeight);
     }
     
     public void type(char c)
     {
-        lines.get(cursor.getRow()).type(c, cursor.getCol());
+        currentLine().type(c, cursor.getCol());
         right();
     }
     
     public void enter()
     {
-        Line newLine = lines.get(cursor.getRow()).splitAt(cursor.getCol());
+        Line newLine = currentLine().splitAt(cursor.getCol());
         lines.add(cursor.getRow() + 1, newLine);
         down();
         home();
@@ -60,8 +59,8 @@ public class Editor extends JComponent
     {
         if(cursor.getCol() == cols())
             return;
-        Character.TokenType tokenType = get().getTokenType();
-        while(cursor.getCol() < cols() && get().getTokenType() == tokenType)
+        final Character.TokenType tokenType = currentCharacter().getTokenType();
+        while(cursor.getCol() < cols() && currentCharacter().getTokenType() == tokenType)
             right();
     }
     
@@ -69,14 +68,14 @@ public class Editor extends JComponent
     {
         if(cursor.getCol() == 0)
             return;
-        Character.TokenType tokenType = lines.get(cursor.getRow()).get(cursor.getCol()-1).getTokenType();
-        while(cursor.getCol() > 0 && lines.get(cursor.getRow()).get(cursor.getCol()-1).getTokenType() == tokenType)
+        final Character.TokenType tokenType = previousCharacter().getTokenType();
+        while(cursor.getCol() > 0 && previousCharacter().getTokenType() == tokenType)
             left();
     }
     
     public void left()
     {
-        cursor.left(cols(cursor.getRow() - 1));
+        cursor.left(cols(previousRow()));
     }
     
     public void right()
@@ -86,12 +85,12 @@ public class Editor extends JComponent
     
     public void up()
     {
-        cursor.up(cols(cursor.getRow() - 1));
+        cursor.up(cols(previousRow()));
     }
     
     public void down()
     {
-        cursor.down(rows(), cols(cursor.getRow() + 1));
+        cursor.down(rows(), cols(nextRow()));
     }
     
     public void home()
@@ -106,16 +105,16 @@ public class Editor extends JComponent
     
     public void backspace()
     {
-        cursor.left(cols(cursor.getRow() - 1));
+        cursor.left(cols(previousRow()));
         delete();
     }
     
     public void delete()
     {
-        if (cols() == cursor.getCol() && cursor.getRow() < lines.size() - 1)
-            lines.set(cursor.getRow(), new Line(lines.get(cursor.getRow()), lines.remove(cursor.getRow() + 1)));
+        if (cols() == cursor.getCol() && currentRow() < lines.size() - 1)
+            lines.set(currentRow(), new Line(currentLine(), lines.remove(nextRow())));
         else
-            lines.get(cursor.getRow()).remove(cursor.getCol());
+            currentLine().remove(cursor.getCol());
     }
     
     public Cursor getTextCursor()
@@ -133,14 +132,39 @@ public class Editor extends JComponent
         return row < 0 || row >= rows() ? 0 : lines.get(row).size();
     }
     
+    private int currentRow()
+    {
+        return cursor.getRow();
+    }
+    
+    private int previousRow()
+    {
+        return cursor.getRow() - 1;
+    }
+    
+    private int nextRow()
+    {
+        return cursor.getRow() + 1;
+    }
+    
+    private Line currentLine()
+    {
+        return lines.get(currentRow());
+    }
+    
     private int cols()
     {
         return lines.get(cursor.getRow()).size();
     }
     
-    private Character get()
+    private Character currentCharacter()
     {
         return lines.get(cursor.getRow()).get(cursor.getCol());
+    }
+    
+    private Character previousCharacter()
+    {
+        return lines.get(cursor.getRow()).get(cursor.getCol() - 1);
     }
     
     private int getLineHeight(Graphics2D g2)
