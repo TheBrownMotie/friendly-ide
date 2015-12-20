@@ -51,7 +51,7 @@ public class Editor extends JComponent
     {
         Line newLine = currentLine().splitAt(cursor.getCol());
         lines.add(cursor.getRow() + 1, newLine);
-        down();
+        down(1);
         home();
     }
     
@@ -83,14 +83,16 @@ public class Editor extends JComponent
         cursor.right(rows(), cols());
     }
     
-    public void up()
+    public void up(int numUp)
     {
-        cursor.up(cols(previousRow()));
+        for(int i = 0; i < numUp; i++)
+            cursor.up(cols(previousRow()));
     }
     
-    public void down()
+    public void down(int numDown)
     {
-        cursor.down(rows(), cols(nextRow()));
+        for(int i = 0; i < numDown; i++)
+            cursor.down(rows(), cols(nextRow()));
     }
     
     public void home()

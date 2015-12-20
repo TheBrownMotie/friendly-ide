@@ -43,9 +43,9 @@ public class IDE extends JFrame implements KeyListener
         boolean control = (e.getModifiers() & KeyEvent.CTRL_MASK) != 0;
         
         if((control && e.getKeyCode() == KeyEvent.VK_W) || e.getKeyCode() == KeyEvent.VK_UP)
-            editors.get(visibleEditor).up();
+            editors.get(visibleEditor).up(1);
         else if((control && e.getKeyCode() == KeyEvent.VK_S) || e.getKeyCode() == KeyEvent.VK_DOWN)
-            editors.get(visibleEditor).down();
+            editors.get(visibleEditor).down(1);
         else if((control && e.getKeyCode() == KeyEvent.VK_A) || e.getKeyCode() == KeyEvent.VK_LEFT)
             editors.get(visibleEditor).left();
         else if((control && e.getKeyCode() == KeyEvent.VK_D) || e.getKeyCode() == KeyEvent.VK_RIGHT)
@@ -54,6 +54,10 @@ public class IDE extends JFrame implements KeyListener
             editors.get(visibleEditor).rightToken();
         else if(control && e.getKeyCode() == KeyEvent.VK_J)
             editors.get(visibleEditor).leftToken();
+        else if(control && e.getKeyCode() == KeyEvent.VK_I)
+            editors.get(visibleEditor).up(4);
+        else if(control && e.getKeyCode() == KeyEvent.VK_K)
+            editors.get(visibleEditor).down(4);
         else if(e.getKeyCode() == KeyEvent.VK_HOME)
             editors.get(visibleEditor).home();
         else if(e.getKeyCode() == KeyEvent.VK_END)
