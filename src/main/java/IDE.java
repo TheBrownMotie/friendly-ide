@@ -51,6 +51,8 @@ public class IDE extends JFrame implements KeyListener
         }
         else if(control && e.getKeyCode() == KeyEvent.VK_V)
             editor.paste();
+        else if(control && e.getKeyCode() == KeyEvent.VK_X)
+            editor.cut();
         else if((control && e.getKeyCode() == KeyEvent.VK_W) || e.getKeyCode() == KeyEvent.VK_UP)
             editor.up(1);
         else if((control && e.getKeyCode() == KeyEvent.VK_S) || e.getKeyCode() == KeyEvent.VK_DOWN)

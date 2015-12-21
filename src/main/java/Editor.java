@@ -8,10 +8,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.swing.JComponent;
 
 public class Editor extends JComponent
@@ -68,16 +65,19 @@ public class Editor extends JComponent
         }
     }
     
-    private List<Line> getText(CursorRange range)
+    private void deleteText(CursorRange range)
     {
-        if(range.getFirst().getRow() == range.getSecond().getRow())
-            return Collections.singletonList(this.lines.get(range.getFirst().getRow()).subLine(range.getFirst().getCol(), range.getSecond().getCol()));
-        List<Line> lines = new ArrayList<>();
-        lines.add(this.lines.get(range.getFirst().getRow()).subLine(range.getFirst().getCol()));
-        for(int r = range.getFirst().getRow()+1; r < range.getSecond().getRow(); r++)
-            lines.add(this.lines.get(r));
-        lines.add(this.lines.get(range.getSecond().getRow()).subLine(0, range.getSecond().getCol()));
-        return lines;
+        highlightStart = range.getFirst();
+        cursor = range.getSecond();
+        
+        while(!cursor.equals(highlightStart))
+        {
+            cursor.left(cols(previousRow()));
+            if (cols() == cursor.getCol() && currentRow() < lines.size() - 1)
+                lines.set(currentRow(), new Line(currentLine(), lines.remove(nextRow())));
+            else if(!isAtEnd())
+                currentLine().remove(cursor.getCol());
+        }
     }
     
     private void drawBackground(Graphics2D g, int x, int y, int w, int h, Color c)
@@ -109,6 +109,25 @@ public class Editor extends JComponent
         }
     }
     
+    private void copy()
+    {
+        StringBuilder text = new StringBuilder();
+        CursorRange range = new CursorRange(cursor, highlightStart);
+        if(range.getFirst().getRow() == range.getSecond().getRow())
+        {
+            text.append(this.lines.get(range.getFirst().getRow()).subLine(range.getFirst().getCol(), range.getSecond().getCol()));
+        }
+        else
+        {
+            text.append(this.lines.get(range.getFirst().getRow()).subLine(range.getFirst().getCol())).append("\n");
+            for(int r = range.getFirst().getRow()+1; r < range.getSecond().getRow(); r++)
+                text.append(this.lines.get(r)).append("\n");
+            text.append(this.lines.get(range.getSecond().getRow()).subLine(0, range.getSecond().getCol()));
+        }
+        
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text.toString()), null);
+    }
+    
     public void mark()
     {
         if(highlightStart == null)
@@ -117,12 +136,7 @@ public class Editor extends JComponent
         }
         else
         {
-            String toCopy = getText(new CursorRange(cursor, highlightStart))
-                    .stream()
-                    .map(Line::toString)
-                    .collect(Collectors.joining("\n"));
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(toCopy), null);
-            System.out.println(toCopy);
+            copy();
             highlightStart = null;
         }
     }
@@ -133,11 +147,25 @@ public class Editor extends JComponent
         {
             String data = (String)Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
             for(char c : data.toCharArray())
-                type(c);
+            {
+                if(c == '\n')
+                    enter();
+                else
+                    type(c);
+            }
         }
         catch (HeadlessException | UnsupportedFlavorException | IOException e)
         {
             e.printStackTrace();
+        }
+    }
+    
+    public void cut()
+    {
+        if(highlightStart != null)
+        {
+            copy();
+            delete();
         }
     }
     
@@ -213,16 +241,25 @@ public class Editor extends JComponent
     
     public void backspace()
     {
-        cursor.left(cols(previousRow()));
+        if(highlightStart == null)
+            cursor.left(cols(previousRow()));
         delete();
     }
     
     public void delete()
     {
-        if (cols() == cursor.getCol() && currentRow() < lines.size() - 1)
-            lines.set(currentRow(), new Line(currentLine(), lines.remove(nextRow())));
-        else if(!isAtEnd())
-            currentLine().remove(cursor.getCol());
+        if(highlightStart != null)
+        {
+            deleteText(new CursorRange(cursor, highlightStart));
+            highlightStart = null;
+        }
+        else
+        {
+            if (cols() == cursor.getCol() && currentRow() < lines.size() - 1)
+                lines.set(currentRow(), new Line(currentLine(), lines.remove(nextRow())));
+            else if(!isAtEnd())
+                currentLine().remove(cursor.getCol());
+        }
     }
     
     public Cursor getTextCursor()
