@@ -20,6 +20,7 @@ public final class Character
     }
     
     public static final Character NEWLINE = new Character('\n', null, null, false, false, false);
+    private static final int numSpacesPerTab = 4;
     
     private final char c;
     private final TokenType type;
@@ -52,6 +53,14 @@ public final class Character
         return g.getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, fontSize)).getDescent();
     }
     
+    public int getTotalWidth(Graphics2D g, int fontSize)
+    {
+        int charWidth = Character.getWidth(g, fontSize);
+        if(c != '\t')
+            return charWidth;
+        return charWidth * numSpacesPerTab;
+    }
+    
     public void setFontColor(Color fontColor)
     {
         this.fontColor = fontColor;
@@ -72,18 +81,26 @@ public final class Character
         this.isStrikethrough = isStrikethrough;
     }
     
-    public void paint(Graphics2D g, int fontSize, int x, int y)
+    public int paint(Graphics2D g, int fontSize, int x, int y)
     {
         int w = Character.getWidth(g, fontSize);
         int h = Line.getHeight(g, fontSize);
-
+        
         g.setFont(getFont(fontSize));
-        
         g.setColor(fontColor);
-        g.drawString(c + "", x, y);
-        
-        if(isStrikethrough)
-            g.drawLine(x, y - (h/2), x + w, y - (h/2));
+        if(c != '\t')
+        {
+            g.drawString(c + "", x, y);
+            if(isStrikethrough)
+                g.drawLine(x, y - (h/2), x + w, y - (h/2));
+            return w;
+        }
+        else
+        {
+            for(int xPos = x; xPos < x + (w * numSpacesPerTab); xPos += w)
+                g.drawString(" ", xPos, y);
+            return w * numSpacesPerTab;
+        }
     }
     
     public Font getFont(int size)

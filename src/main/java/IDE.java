@@ -20,6 +20,7 @@ public class IDE extends JFrame implements KeyListener
         ide.setSize(600, 600);
         ide.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ide.addKeyListener(ide);
+        ide.setFocusTraversalKeysEnabled(false);
         ide.setVisible(true);
     }
     
@@ -82,7 +83,7 @@ public class IDE extends JFrame implements KeyListener
             editor.backspace();
         else if(e.getKeyCode() == KeyEvent.VK_ENTER)
             editor.enter();
-        else if(java.lang.Character.isDefined(e.getKeyChar()) && (e.getModifiers() == 0 || e.getModifiers() == InputEvent.SHIFT_MASK))
+        else if(editor.isTypableCharacter((char)e.getKeyCode()) && (e.getModifiers() == 0 || e.getModifiers() == InputEvent.SHIFT_MASK))
             editor.type(e.getKeyChar());
         editor.repaint();
     }

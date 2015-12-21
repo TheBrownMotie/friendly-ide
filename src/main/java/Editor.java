@@ -39,7 +39,6 @@ public class Editor extends JComponent
         g2.fillRect(0, 0, this.getWidth(), this.getHeight());
         
         final int lineHeight = getLineHeight(g2) + 1;
-        final int charWidth = Character.getWidth(g2, fontSize);
         final int maxDescent = Character.getMaxDescent(g2, fontSize) - 1;
         
         int y = lineHeight;
@@ -51,10 +50,10 @@ public class Editor extends JComponent
             for(Character character : line.characters())
             {
                 boolean highlight = Cursor.isBetween(highlightStart, cursor, new Cursor(row, col));
+                int charWidth = character.getTotalWidth(g2, fontSize);
                 drawBackground(g2, x, y + maxDescent, charWidth, lineHeight, highlight ? Color.BLUE : Color.WHITE);
                 character.paint(g2, fontSize, x, y);
                 drawCursors(g2, x, y - lineHeight + maxDescent, lineHeight, new Cursor(row, col), cursor, highlightStart);
-                
                 col++;
                 x += charWidth;
             }
@@ -169,10 +168,18 @@ public class Editor extends JComponent
         }
     }
     
-    public void type(char c)
+    public boolean isTypableCharacter(int codePoint)
     {
-        currentLine().type(c, cursor.getCol());
-        right();
+        return java.lang.Character.isDefined(codePoint);
+    }
+    
+    public void type(char... c)
+    {
+        for(char ch : c)
+        {
+            currentLine().type(ch, cursor.getCol());
+            right();
+        }
     }
     
     public void enter()
