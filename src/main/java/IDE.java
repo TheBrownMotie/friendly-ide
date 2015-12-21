@@ -1,6 +1,8 @@
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +13,9 @@ public class IDE extends JFrame implements KeyListener
 {
     private static final long serialVersionUID = 1L;
 
-    public static void main(String... args)
+    public static void main(String... args) throws FileNotFoundException
     {
+        Configuration.load(new File("src/main/resources/keyword_colormap.conf"));
         IDE ide = new IDE();
         ide.setSize(600, 600);
         ide.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

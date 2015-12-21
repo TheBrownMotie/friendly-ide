@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 class Line
@@ -36,6 +38,23 @@ class Line
     {
         return subLine(start, characters.size());
     }
+    
+    public void colorWords(String word, Color color)
+    {
+        for(int index : indicesOf(word))
+            for(int j = index; j < index + word.length(); j++)
+                this.characters.get(j).setFontColor(color);
+    }
+    
+    public List<Integer> indicesOf(String search)
+    {
+        Pattern p = Pattern.compile("\\b" + search + "\\b");
+        Matcher m = p.matcher(toString());
+        List<Integer> indices = new ArrayList<>(search.length());
+        while(m.find())
+            indices.add(m.start());
+        return indices;
+    }
 
     public int size()
     {
@@ -60,8 +79,13 @@ class Line
     public void type(char c, int col)
     {
         Character character = new Character(c, Color.BLACK, Color.WHITE, false, false, false);
+        characters.forEach(ch -> ch.setFontColor(Color.BLACK));
         if(col <= characters.size())
+        {
             characters.add(col, character);
+            Configuration.keywordColors.forEach((s, color) -> colorWords(s, color));
+            //colorWords("for", Color.RED);
+        }
     }
     
     public void remove(int col)
