@@ -6,9 +6,11 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JComponent;
 
 public class Editor extends JComponent
@@ -165,9 +167,13 @@ public class Editor extends JComponent
 		}
 	}
 	
-	public boolean isTypableCharacter(int codePoint)
+	public boolean isTypableCharacter(char character)
 	{
-		return java.lang.Character.isDefined(codePoint);
+	    java.lang.Character.UnicodeBlock block = java.lang.Character.UnicodeBlock.of(character);
+	    return (!java.lang.Character.isISOControl(character)) &&
+	    		character != KeyEvent.CHAR_UNDEFINED &&
+	    		block != null &&
+	    		block != java.lang.Character.UnicodeBlock.SPECIALS;
 	}
 	
 	public void type(char... c)
@@ -181,10 +187,16 @@ public class Editor extends JComponent
 	
 	public void enter()
 	{
+		int numOpenBraces = 0;
+		for(Line line : lines)
+			for(Character character : line.characters())
+				numOpenBraces += (character.getChar() == '{' ? 1 : (character.getChar() == '}' ? -1 : 0));
 		Line newLine = currentLine().splitAt(cursor.getCol());
 		lines.add(cursor.getRow() + 1, newLine);
 		down(1);
 		home();
+		for(int count = 0; count < numOpenBraces; count++)
+			this.type('\t');
 	}
 	
 	public void rightToken()

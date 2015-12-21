@@ -37,6 +37,11 @@ public final class Character
 		this.isStrikethrough = isStrikethrough;
 	}
 	
+	public char getChar()
+	{
+	    return c;
+	}
+	
 	public TokenType getTokenType()
 	{
 		return type;
