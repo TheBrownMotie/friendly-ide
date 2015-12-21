@@ -1,3 +1,4 @@
+package com.nickww.friendlyide;
 
 public class CursorRange
 {
