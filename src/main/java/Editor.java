@@ -14,9 +14,6 @@ import javax.swing.JComponent;
 public class Editor extends JComponent
 {
 	private static final long serialVersionUID = 1L;
-	private static final Color background = Color.WHITE;
-	private static final int fontSize = 14;
-	private static final int lineSpacing = 5;
 	
 	private List<Line> lines;
 	private Cursor cursor;
@@ -35,11 +32,11 @@ public class Editor extends JComponent
 	{
 		Graphics2D g2 = (Graphics2D) g;
 		
-		g2.setColor(background);
+		g2.setColor(Configuration.background);
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
 		final int lineHeight = getLineHeight(g2) + 1;
-		final int maxDescent = Character.getMaxDescent(g2, fontSize) - 1;
+		final int maxDescent = Character.getMaxDescent(g2, Configuration.fontSize) - 1;
 		
 		int y = lineHeight;
 		int row = 0;
@@ -50,9 +47,9 @@ public class Editor extends JComponent
 			for(Character character : line.characters())
 			{
 				boolean highlight = Cursor.isBetween(highlightStart, cursor, new Cursor(row, col));
-				int charWidth = character.getTotalWidth(g2, fontSize);
+				int charWidth = character.getTotalWidth(g2, Configuration.fontSize);
 				drawBackground(g2, x, y + maxDescent, charWidth, lineHeight, highlight ? Color.BLUE : Color.WHITE);
-				character.paint(g2, fontSize, x, y);
+				character.paint(g2, Configuration.fontSize, x, y);
 				drawCursors(g2, x, y - lineHeight + maxDescent, lineHeight, new Cursor(row, col), cursor, highlightStart);
 				col++;
 				x += charWidth;
@@ -335,6 +332,6 @@ public class Editor extends JComponent
 	
 	private int getLineHeight(Graphics2D g2)
 	{
-		return Line.getHeight(g2, fontSize) + lineSpacing;
+		return Line.getHeight(g2, Configuration.fontSize) + Configuration.lineSpacing;
 	}
 }

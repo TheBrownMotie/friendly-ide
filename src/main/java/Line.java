@@ -78,7 +78,6 @@ class Line
 
 	public void type(char c, int col)
 	{
-		System.out.println(c);
 		Character character = new Character(c, Color.BLACK, Color.WHITE, false, false, false);
 		characters.forEach(ch -> ch.setFontColor(Color.BLACK));
 		if(col <= characters.size())

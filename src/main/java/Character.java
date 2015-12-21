@@ -20,7 +20,6 @@ public final class Character
 	}
 	
 	public static final Character NEWLINE = new Character('\n', null, null, false, false, false);
-	private static final int numSpacesPerTab = 4;
 	
 	private final char c;
 	private final TokenType type;
@@ -58,7 +57,7 @@ public final class Character
 		int charWidth = Character.getWidth(g, fontSize);
 		if(c != '\t')
 			return charWidth;
-		return charWidth * numSpacesPerTab;
+		return charWidth * Configuration.numSpacesPerTab;
 	}
 	
 	public void setFontColor(Color fontColor)
@@ -97,9 +96,9 @@ public final class Character
 		}
 		else
 		{
-			for(int xPos = x; xPos < x + (w * numSpacesPerTab); xPos += w)
+			for(int xPos = x; xPos < x + (w * Configuration.numSpacesPerTab); xPos += w)
 				g.drawString(" ", xPos, y);
-			return w * numSpacesPerTab;
+			return w * Configuration.numSpacesPerTab;
 		}
 	}
 	

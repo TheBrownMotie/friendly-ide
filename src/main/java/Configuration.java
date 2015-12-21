@@ -9,7 +9,11 @@ import java.util.Scanner;
 public class Configuration
 {
 	public static Map<String, Color> keywordColors;
-	
+	public static final Color background = Color.WHITE;
+	public static final int fontSize = 14;
+	public static final int lineSpacing = 5;
+    public static final int numSpacesPerTab = 4;
+
 	public static void load(File keywordColormap) throws FileNotFoundException
 	{
 		keywordColors = new HashMap<>();
