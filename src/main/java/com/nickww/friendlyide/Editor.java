@@ -52,10 +52,7 @@ public class Editor extends JComponent
 		try(Scanner scanner = new Scanner(file))
 		{
 			while(scanner.hasNextLine())
-			{
-				this.type(scanner.nextLine().toCharArray());
-				this.enter();
-			}
+				type(scanner.nextLine().toCharArray()).enter();
 		}
 		this.file = file;
 	}
@@ -115,7 +112,7 @@ public class Editor extends JComponent
 		}
 	}
 	
-	private void deleteText(CursorRange range)
+	private Editor deleteText(CursorRange range)
 	{
 		highlightStart = range.getFirst();
 		cursor = range.getSecond();
@@ -128,6 +125,7 @@ public class Editor extends JComponent
 			else if(!isAtEnd())
 				currentLine().remove(cursor.getCol());
 		}
+		return this;
 	}
 	
 	private void drawBackground(Graphics2D g, int x, int y, int w, int h, Color c)
@@ -159,7 +157,7 @@ public class Editor extends JComponent
 		}
 	}
 	
-	private void copy()
+	private Editor copy()
 	{
 		StringBuilder text = new StringBuilder();
 		CursorRange range = new CursorRange(cursor, highlightStart);
@@ -176,9 +174,10 @@ public class Editor extends JComponent
 		}
 		
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text.toString()), null);
+		return this;
 	}
 	
-	public void mark()
+	public Editor mark()
 	{
 		if(highlightStart == null)
 		{
@@ -189,9 +188,10 @@ public class Editor extends JComponent
 			copy();
 			highlightStart = null;
 		}
+		return this;
 	}
 	
-	public void paste()
+	public Editor paste()
 	{
 		try
 		{
@@ -208,15 +208,14 @@ public class Editor extends JComponent
 		{
 			e.printStackTrace();
 		}
+		return this;
 	}
 	
-	public void cut()
+	public Editor cut()
 	{
 		if(highlightStart != null)
-		{
-			copy();
-			delete();
-		}
+			copy().delete();
+		return this;
 	}
 	
 	public boolean isTypableCharacter(char character)
@@ -230,7 +229,7 @@ public class Editor extends JComponent
 	    		block != java.lang.Character.UnicodeBlock.SPECIALS;
 	}
 	
-	public void type(char... c)
+	public Editor type(char... c)
 	{
 		saverTimer.reset();
 		for(char ch : c)
@@ -238,9 +237,10 @@ public class Editor extends JComponent
 			currentLine().type(ch, cursor.getCol());
 			right();
 		}
+		return this;
 	}
 	
-	public void enter()
+	public Editor enter()
 	{
 		int numOpenBraces = 0;
 		for(Line line : lines)
@@ -248,77 +248,86 @@ public class Editor extends JComponent
 				numOpenBraces += (character.getChar() == '{' ? 1 : (character.getChar() == '}' ? -1 : 0));
 		Line newLine = currentLine().splitAt(cursor.getCol());
 		lines.add(cursor.getRow() + 1, newLine);
-		down(1);
-		home();
+		down(1).home();
 		for(int count = 0; count < numOpenBraces; count++)
 			this.type('\t');
+		return this;
 	}
 	
-	public void rightToken()
+	public Editor rightToken()
 	{
 		Character.TokenType tokenType = currentCharacter().getTokenType();
 		if(isAtEnd())
-			return;
+			return this;
 		
 		if(cursor.getCol() == cols())
 			right();
 		while(cursor.getCol() < cols() && currentCharacter().getTokenType() == tokenType)
 			right();
+		return this;
 	}
 	
-	public void leftToken()
+	public Editor leftToken()
 	{
 		Character.TokenType tokenType = previousCharacter().getTokenType();
 		if(isAtBeginning())
-			return;
+			return this;
 		
 		if(cursor.getCol() == 0)
 			left();
 		while(cursor.getCol() > 0 && previousCharacter().getTokenType() == tokenType)
 			left();
+		return this;
 	}
 	
-	public void left()
+	public Editor left()
 	{
 		cursor.left(cols(previousRow()));
+		return this;
 	}
 	
-	public void right()
+	public Editor right()
 	{
 		cursor.right(rows(), cols());
+		return this;
 	}
 	
-	public void up(int numUp)
+	public Editor up(int numUp)
 	{
 		for(int i = 0; i < numUp; i++)
 			cursor.up(cols(previousRow()));
+		return this;
 	}
 	
-	public void down(int numDown)
+	public Editor down(int numDown)
 	{
 		for(int i = 0; i < numDown; i++)
 			cursor.down(rows(), cols(nextRow()));
+		return this;
 	}
 	
-	public void home()
+	public Editor home()
 	{
 		cursor.home();
+		return this;
 	}
 	
-	public void end()
+	public Editor end()
 	{
 		cursor.end(cols());
+		return this;
 	}
 	
-	public void backspace()
+	public Editor backspace()
 	{
 		saverTimer.reset();
 		if(highlightStart == null)
 			cursor.left(cols(previousRow()));
 		delete();
+		return this;
 	}
 	
-	public void delete()
+	public Editor delete()
 	{
 		saverTimer.reset();
 		if(highlightStart != null)
@@ -333,6 +342,7 @@ public class Editor extends JComponent
 			else if(!isAtEnd())
 				currentLine().remove(cursor.getCol());
 		}
+		return this;
 	}
 	
 	public Cursor getTextCursor()

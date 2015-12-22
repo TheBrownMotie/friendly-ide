@@ -77,7 +77,7 @@ class Line
 		return characters.stream().map(Character::toString).collect(Collectors.joining());
 	}
 
-	public void type(char c, int col)
+	public Line type(char c, int col)
 	{
 		Character character = new Character(c, Color.BLACK, Color.WHITE, false, false, false);
 		characters.forEach(ch -> ch.setFontColor(Color.BLACK));
@@ -86,11 +86,13 @@ class Line
 			characters.add(col, character);
 			Configuration.keywordColors.forEach((s, color) -> colorWords(s, color));
 		}
+		return this;
 	}
 	
-	public void remove(int col)
+	public Line remove(int col)
 	{
 		characters.remove(col);
+		return this;
 	}
 	
 	public Line splitAt(int col)
