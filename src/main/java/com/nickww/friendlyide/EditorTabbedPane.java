@@ -47,7 +47,7 @@ public class EditorTabbedPane
 	public Editor getVisibleEditor()
 	{
 		return (Editor)tabbedPane.getSelectedComponent();
-	}
+	} 
 	
 	public void open()
 	{

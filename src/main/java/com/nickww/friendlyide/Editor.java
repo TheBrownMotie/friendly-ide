@@ -11,16 +11,23 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class Editor extends JComponent
 {
 	private static final long serialVersionUID = 1L;
 	
+	private ResettableTimer saverTimer;
+	private File file;
 	private List<Line> lines;
 	private Cursor cursor;
 	private Cursor highlightStart;
@@ -31,6 +38,8 @@ public class Editor extends JComponent
 		lines.add(new Line());
 		cursor = new Cursor();
 		highlightStart = null;
+		file = null;
+		saverTimer = new ResettableTimer(2, TimeUnit.SECONDS, this::save);
 	}
 
 	public Editor(File file) throws FileNotFoundException
@@ -47,6 +56,28 @@ public class Editor extends JComponent
 				this.type(scanner.nextLine().toCharArray());
 				this.enter();
 			}
+		}
+		this.file = file;
+	}
+	
+	public void save()
+	{
+		if(file == null)
+		{
+			JFileChooser chooser = new JFileChooser(".");
+			int result = chooser.showSaveDialog(this);
+			if(result != JFileChooser.APPROVE_OPTION)
+				return;
+			file = chooser.getSelectedFile();
+		}
+		
+		try
+		{
+			Files.write(file.toPath(), toString().getBytes("UTF8"));
+		}
+		catch(IOException e)
+		{
+			JOptionPane.showMessageDialog(this, "Could not save to target location", "IO exception", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -201,6 +232,7 @@ public class Editor extends JComponent
 	
 	public void type(char... c)
 	{
+		saverTimer.reset();
 		for(char ch : c)
 		{
 			currentLine().type(ch, cursor.getCol());
@@ -280,6 +312,7 @@ public class Editor extends JComponent
 	
 	public void backspace()
 	{
+		saverTimer.reset();
 		if(highlightStart == null)
 			cursor.left(cols(previousRow()));
 		delete();
@@ -287,6 +320,7 @@ public class Editor extends JComponent
 	
 	public void delete()
 	{
+		saverTimer.reset();
 		if(highlightStart != null)
 		{
 			deleteText(new CursorRange(cursor, highlightStart));
@@ -368,5 +402,11 @@ public class Editor extends JComponent
 	private int getLineHeight(Graphics2D g2)
 	{
 		return Line.getHeight(g2, Configuration.fontSize) + Configuration.lineSpacing;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return lines.stream().map(Line::toString).collect(Collectors.joining(System.lineSeparator()));
 	}
 }
