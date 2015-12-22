@@ -4,10 +4,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 
 import com.nickww.friendlyide.keyboardmap.Dvorak;
 import com.nickww.friendlyide.keyboardmap.KeyboardMap;
@@ -22,34 +20,33 @@ public class IDE extends JFrame implements KeyListener
 		IDE ide = new IDE();
 		ide.setSize(600, 600);
 		ide.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		ide.addKeyListener(ide);
 		ide.setFocusTraversalKeysEnabled(false);
 		ide.setVisible(true);
 	}
 	
-	private List<Editor> editors;
-	private int visibleEditor;
+	private JTabbedPane tabbedPane;
 	private KeyboardMap keyboardMap;
 	
 	public IDE()
 	{
-		this.editors = new ArrayList<>();
+		tabbedPane = new JTabbedPane();
+		tabbedPane.setFocusTraversalKeysEnabled(false);
+		tabbedPane.addKeyListener(this);
 		keyboardMap = new Dvorak();
 		addEditor();
+		addEditor();
+		this.add(tabbedPane);
 	}
 	
 	public void addEditor()
 	{
-		Editor e = new Editor();
-		this.editors.add(e);
-		this.visibleEditor = this.editors.size() - 1;
-		this.add(e);
+		this.tabbedPane.addTab("", new Editor());
 	}
 	
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
-		Editor editor = editors.get(visibleEditor);
+		Editor editor = (Editor)tabbedPane.getSelectedComponent();
 		keyboardMap.handle(editor, e);
 		editor.repaint();
 	}
