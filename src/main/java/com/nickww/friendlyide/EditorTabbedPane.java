@@ -10,38 +10,43 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-public class EditorTabbedPane extends JTabbedPane
+public class EditorTabbedPane
 {
-	private static final long serialVersionUID = 1L;
+	private final JTabbedPane tabbedPane;
 	
 	public EditorTabbedPane(KeyListener keyListener)
 	{
-		super();
-		super.addKeyListener(keyListener);
-		super.setFocusTraversalKeysEnabled(false);
-		super.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("LEFT"), "none");
-		super.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("RIGHT"), "none");
+		tabbedPane = new JTabbedPane();
+		tabbedPane.addKeyListener(keyListener);
+		tabbedPane.setFocusTraversalKeysEnabled(false);
+		tabbedPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("LEFT"), "none");
+		tabbedPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("RIGHT"), "none");
+	}
+	
+	public JTabbedPane getTabbedPane()
+	{
+		return tabbedPane;
 	}
 	
 	public void tabLeft()
 	{
-		int newIndex = super.getSelectedIndex() - 1;
+		int newIndex = tabbedPane.getSelectedIndex() - 1;
 		if(newIndex < 0)
-			newIndex = super.getTabCount() - 1;
-		super.setSelectedIndex(newIndex);
+			newIndex = tabbedPane.getTabCount() - 1;
+		tabbedPane.setSelectedIndex(newIndex);
 	}
 	
 	public void tabRight()
 	{
-		int newIndex = super.getSelectedIndex() + 1;
-		if(newIndex >= super.getTabCount())
+		int newIndex = tabbedPane.getSelectedIndex() + 1;
+		if(newIndex >= tabbedPane.getTabCount())
 			newIndex = 0;
-		super.setSelectedIndex(newIndex);
+		tabbedPane.setSelectedIndex(newIndex);
 	}
 	
 	public Editor getVisibleEditor()
 	{
-		return (Editor)super.getSelectedComponent();
+		return (Editor)tabbedPane.getSelectedComponent();
 	}
 	
 	public void open()
@@ -49,16 +54,16 @@ public class EditorTabbedPane extends JTabbedPane
 		try
 		{
 			JFileChooser chooser = new JFileChooser(".");
-			int result = chooser.showOpenDialog(this);
+			int result = chooser.showOpenDialog(tabbedPane);
 			if(result == JFileChooser.APPROVE_OPTION)
 			{
 				File file = chooser.getSelectedFile();
-				super.addTab(file.getName(), new Editor(file));
+				tabbedPane.addTab(file.getName(), new Editor(file));
 			}
 		}
 		catch(FileNotFoundException e)
 		{
-			JOptionPane.showMessageDialog(this, "Could not read the selected file.", "File not found", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(tabbedPane, "Could not read the selected file.", "File not found", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

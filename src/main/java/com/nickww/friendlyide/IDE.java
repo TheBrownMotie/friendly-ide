@@ -31,12 +31,12 @@ public class IDE extends JFrame implements KeyListener
 		tabbedPane = new EditorTabbedPane(this);
 		keyboardMap = new Dvorak();
 		addEditor();
-		this.add(tabbedPane);
+		this.add(tabbedPane.getTabbedPane());
 	}
 	
 	public void addEditor()
 	{
-		this.tabbedPane.addTab("", new Editor());
+		this.tabbedPane.getTabbedPane().addTab("", new Editor());
 	}
 	
 	@Override

@@ -11,7 +11,7 @@ public class Dvorak implements KeyboardMap
 	@Override
 	public void handle(EditorTabbedPane editorsPane, KeyEvent event)
 	{
-		Editor editor = (Editor)editorsPane.getSelectedComponent();
+		Editor editor = editorsPane.getVisibleEditor();
 		int keyCode = event.getKeyCode();
 		boolean control = (event.getModifiers() & KeyEvent.CTRL_MASK) != 0;
 		
