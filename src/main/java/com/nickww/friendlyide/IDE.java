@@ -5,7 +5,6 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
 
 import com.nickww.friendlyide.keyboardmap.Dvorak;
 import com.nickww.friendlyide.keyboardmap.KeyboardMap;
@@ -24,16 +23,13 @@ public class IDE extends JFrame implements KeyListener
 		ide.setVisible(true);
 	}
 	
-	private JTabbedPane tabbedPane;
+	private EditorTabbedPane tabbedPane;
 	private KeyboardMap keyboardMap;
 	
 	public IDE()
 	{
-		tabbedPane = new JTabbedPane();
-		tabbedPane.setFocusTraversalKeysEnabled(false);
-		tabbedPane.addKeyListener(this);
+		tabbedPane = new EditorTabbedPane(this);
 		keyboardMap = new Dvorak();
-		addEditor();
 		addEditor();
 		this.add(tabbedPane);
 	}
@@ -46,9 +42,8 @@ public class IDE extends JFrame implements KeyListener
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
-		Editor editor = (Editor)tabbedPane.getSelectedComponent();
-		keyboardMap.handle(editor, e);
-		editor.repaint();
+		keyboardMap.handle(tabbedPane, e);
+		tabbedPane.getVisibleEditor().repaint();
 	}
 	
 	@Override 

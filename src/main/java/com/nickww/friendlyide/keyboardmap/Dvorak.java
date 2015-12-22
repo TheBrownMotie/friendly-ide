@@ -4,12 +4,14 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import com.nickww.friendlyide.Editor;
+import com.nickww.friendlyide.EditorTabbedPane;
 
 public class Dvorak implements KeyboardMap
 {
 	@Override
-	public void handle(Editor editor, KeyEvent event)
+	public void handle(EditorTabbedPane editorsPane, KeyEvent event)
 	{
+		Editor editor = (Editor)editorsPane.getSelectedComponent();
 		int keyCode = event.getKeyCode();
 		boolean control = (event.getModifiers() & KeyEvent.CTRL_MASK) != 0;
 		
@@ -48,8 +50,9 @@ public class Dvorak implements KeyboardMap
 			editor.backspace();
 		else if(keyCode == KeyEvent.VK_ENTER)
 			editor.enter();
+		else if(control && keyCode == KeyEvent.VK_R)
+			editorsPane.open();
 		else if(editor.isTypableCharacter((char)keyCode) && (event.getModifiers() == 0 || event.getModifiers() == InputEvent.SHIFT_MASK))
 			editor.type(event.getKeyChar());
 	}
-
 }

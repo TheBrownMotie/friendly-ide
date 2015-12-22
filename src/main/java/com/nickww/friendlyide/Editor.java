@@ -8,9 +8,12 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.JComponent;
 
@@ -28,6 +31,23 @@ public class Editor extends JComponent
 		lines.add(new Line());
 		cursor = new Cursor();
 		highlightStart = null;
+	}
+
+	public Editor(File file) throws FileNotFoundException
+	{
+		lines = new ArrayList<>();
+		lines.add(new Line());
+		cursor = new Cursor();
+		highlightStart = null;
+		
+		try(Scanner scanner = new Scanner(file))
+		{
+			while(scanner.hasNextLine())
+			{
+				this.type(scanner.nextLine().toCharArray());
+				this.enter();
+			}
+		}
 	}
 	
 	@Override
