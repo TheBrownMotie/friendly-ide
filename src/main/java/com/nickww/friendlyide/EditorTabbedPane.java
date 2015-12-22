@@ -22,7 +22,23 @@ public class EditorTabbedPane extends JTabbedPane
 		super.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("LEFT"), "none");
 		super.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("RIGHT"), "none");
 	}
-
+	
+	public void tabLeft()
+	{
+		int newIndex = super.getSelectedIndex() - 1;
+		if(newIndex < 0)
+			newIndex = super.getTabCount() - 1;
+		super.setSelectedIndex(newIndex);
+	}
+	
+	public void tabRight()
+	{
+		int newIndex = super.getSelectedIndex() + 1;
+		if(newIndex >= super.getTabCount())
+			newIndex = 0;
+		super.setSelectedIndex(newIndex);
+	}
+	
 	public Editor getVisibleEditor()
 	{
 		return (Editor)super.getSelectedComponent();

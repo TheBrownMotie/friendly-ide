@@ -52,6 +52,10 @@ public class Qwerty implements KeyboardMap
 			editor.enter();
 		else if(control && keyCode == KeyEvent.VK_O)
 			editorsPane.open();
+		else if(control && keyCode == KeyEvent.VK_Q)
+			editorsPane.tabLeft();
+		else if(control && keyCode == KeyEvent.VK_E)
+			editorsPane.tabRight();
 		else if(editor.isTypableCharacter((char)keyCode) && (event.getModifiers() == 0 || event.getModifiers() == InputEvent.SHIFT_MASK))
 			editor.type(event.getKeyChar());
 	}

@@ -52,6 +52,10 @@ public class Dvorak implements KeyboardMap
 			editor.enter();
 		else if(control && keyCode == KeyEvent.VK_R)
 			editorsPane.open();
+		else if(control && keyCode == KeyEvent.VK_QUOTE)
+			editorsPane.tabLeft();
+		else if(control && keyCode == KeyEvent.VK_PERIOD)
+			editorsPane.tabRight();
 		else if(editor.isTypableCharacter((char)keyCode) && (event.getModifiers() == 0 || event.getModifiers() == InputEvent.SHIFT_MASK))
 			editor.type(event.getKeyChar());
 	}
