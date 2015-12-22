@@ -1,5 +1,5 @@
 package com.nickww.friendlyide;
-import java.awt.event.InputEvent;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import com.nickww.friendlyide.keyboardmap.Dvorak;
+import com.nickww.friendlyide.keyboardmap.KeyboardMap;
 
 public class IDE extends JFrame implements KeyListener
 {
@@ -27,10 +29,12 @@ public class IDE extends JFrame implements KeyListener
 	
 	private List<Editor> editors;
 	private int visibleEditor;
+	private KeyboardMap keyboardMap;
 	
 	public IDE()
 	{
 		this.editors = new ArrayList<>();
+		keyboardMap = new Dvorak();
 		addEditor();
 	}
 	
@@ -46,46 +50,7 @@ public class IDE extends JFrame implements KeyListener
 	public void keyPressed(KeyEvent e)
 	{
 		Editor editor = editors.get(visibleEditor);
-		
-		boolean control = (e.getModifiers() & KeyEvent.CTRL_MASK) != 0;
-		
-		if(e.getKeyCode() == KeyEvent.VK_ALT)
-		{
-			editor.mark();
-			e.consume();
-		}
-		else if(control && e.getKeyCode() == KeyEvent.VK_V)
-			editor.paste();
-		else if(control && e.getKeyCode() == KeyEvent.VK_X)
-			editor.cut();
-		else if((control && e.getKeyCode() == KeyEvent.VK_W) || e.getKeyCode() == KeyEvent.VK_UP)
-			editor.up(1);
-		else if((control && e.getKeyCode() == KeyEvent.VK_S) || e.getKeyCode() == KeyEvent.VK_DOWN)
-			editor.down(1);
-		else if((control && e.getKeyCode() == KeyEvent.VK_A) || e.getKeyCode() == KeyEvent.VK_LEFT)
-			editor.left();
-		else if((control && e.getKeyCode() == KeyEvent.VK_D) || e.getKeyCode() == KeyEvent.VK_RIGHT)
-			editor.right();
-		else if(control && e.getKeyCode() == KeyEvent.VK_L)
-			editor.rightToken();
-		else if(control && e.getKeyCode() == KeyEvent.VK_J)
-			editor.leftToken();
-		else if(control && e.getKeyCode() == KeyEvent.VK_I)
-			editor.up(4);
-		else if(control && e.getKeyCode() == KeyEvent.VK_K)
-			editor.down(4);
-		else if(e.getKeyCode() == KeyEvent.VK_HOME)
-			editor.home();
-		else if(e.getKeyCode() == KeyEvent.VK_END)
-			editor.end();
-		else if(e.getKeyCode() == KeyEvent.VK_DELETE)
-			editor.delete();
-		else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
-			editor.backspace();
-		else if(e.getKeyCode() == KeyEvent.VK_ENTER)
-			editor.enter();
-		else if(editor.isTypableCharacter((char)e.getKeyCode()) && (e.getModifiers() == 0 || e.getModifiers() == InputEvent.SHIFT_MASK))
-			editor.type(e.getKeyChar());
+		keyboardMap.handle(editor, e);
 		editor.repaint();
 	}
 	

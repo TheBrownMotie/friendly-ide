@@ -170,6 +170,8 @@ public class Editor extends JComponent
 	
 	public boolean isTypableCharacter(char character)
 	{
+		if(character == '\t')
+			return true;
 	    java.lang.Character.UnicodeBlock block = java.lang.Character.UnicodeBlock.of(character);
 	    return (!java.lang.Character.isISOControl(character)) &&
 	    		character != KeyEvent.CHAR_UNDEFINED &&
