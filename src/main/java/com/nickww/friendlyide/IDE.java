@@ -26,12 +26,12 @@ public class IDE extends JFrame implements KeyListener
 	private EditorTabbedPane tabbedPane;
 	private KeyboardMap keyboardMap;
 	
-	public IDE()
+	public IDE() throws FileNotFoundException
 	{
 		tabbedPane = new EditorTabbedPane(this);
 		keyboardMap = new Dvorak();
-		addEditor();
-		this.add(tabbedPane.getTabbedPane());
+		add(tabbedPane.getTabbedPane());
+		tabbedPane.getTabbedPane().addTab("test.txt", new Editor(new File("test.txt")));
 	}
 	
 	public void addEditor()

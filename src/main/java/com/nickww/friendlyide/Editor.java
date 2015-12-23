@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -41,13 +42,14 @@ public class Editor extends JComponent
 		file = null;
 		saverTimer = new ResettableTimer(2, TimeUnit.SECONDS, this::save);
 	}
-
+	
 	public Editor(File file) throws FileNotFoundException
 	{
 		lines = new ArrayList<>();
 		lines.add(new Line());
 		cursor = new Cursor();
 		highlightStart = null;
+		saverTimer = new ResettableTimer(2, TimeUnit.SECONDS, this::save);
 		
 		try(Scanner scanner = new Scanner(file))
 		{
@@ -236,6 +238,7 @@ public class Editor extends JComponent
 		{
 			currentLine().type(ch, cursor.getCol());
 			right();
+			textUpdated();
 		}
 		return this;
 	}
@@ -251,6 +254,7 @@ public class Editor extends JComponent
 		down(1).home();
 		for(int count = 0; count < numOpenBraces; count++)
 			this.type('\t');
+		textUpdated();
 		return this;
 	}
 	
@@ -320,7 +324,6 @@ public class Editor extends JComponent
 	
 	public Editor backspace()
 	{
-		saverTimer.reset();
 		if(highlightStart == null)
 			cursor.left(cols(previousRow()));
 		delete();
@@ -329,7 +332,6 @@ public class Editor extends JComponent
 	
 	public Editor delete()
 	{
-		saverTimer.reset();
 		if(highlightStart != null)
 		{
 			deleteText(new CursorRange(cursor, highlightStart));
@@ -342,12 +344,26 @@ public class Editor extends JComponent
 			else if(!isAtEnd())
 				currentLine().remove(cursor.getCol());
 		}
+		textUpdated();
 		return this;
 	}
 	
 	public Cursor getTextCursor()
 	{
 		return cursor;
+	}
+	
+	private void textUpdated()
+	{
+		Line line = currentLine();
+		saverTimer.reset();
+		for(Character c : line.characters())
+			c.setFontColor(Color.BLACK);
+		
+		for(Map.Entry<String, Color> entry : Configuration.keywordColors.entrySet())
+			for(int index : line.indicesOf(entry.getKey()))
+				for(int j = index; j < index + entry.getKey().length(); j++)
+					line.characters().get(j).setFontColor(entry.getValue());
 	}
 	
 	private boolean isAtBeginning()

@@ -39,14 +39,7 @@ class Line
 	{
 		return subLine(start, characters.size());
 	}
-	
-	public void colorWords(String word, Color color)
-	{
-		for(int index : indicesOf(word))
-			for(int j = index; j < index + word.length(); j++)
-				this.characters.get(j).setFontColor(color);
-	}
-	
+		
 	public List<Integer> indicesOf(String search)
 	{
 		Pattern p = Pattern.compile("\\b" + search + "\\b");
@@ -82,10 +75,7 @@ class Line
 		Character character = new Character(c, Color.BLACK, Color.WHITE, false, false, false);
 		characters.forEach(ch -> ch.setFontColor(Color.BLACK));
 		if(col <= characters.size())
-		{
 			characters.add(col, character);
-			Configuration.keywordColors.forEach((s, color) -> colorWords(s, color));
-		}
 		return this;
 	}
 	
