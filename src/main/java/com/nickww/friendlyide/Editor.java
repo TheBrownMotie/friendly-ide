@@ -23,6 +23,9 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+
 public class Editor extends JComponent
 {
 	private static final long serialVersionUID = 1L;
@@ -54,9 +57,14 @@ public class Editor extends JComponent
 		try(Scanner scanner = new Scanner(file))
 		{
 			while(scanner.hasNextLine())
-				type(scanner.nextLine().toCharArray()).enter();
+				type(scanner.nextLine().toCharArray()).enter(false);
 		}
 		this.file = file;
+	}
+	
+	public List<Line> lines()
+	{
+		return lines;
 	}
 	
 	public void save()
@@ -73,18 +81,31 @@ public class Editor extends JComponent
 		try
 		{
 			Files.write(file.toPath(), toString().getBytes("UTF8"));
+			new JavaEditorParser(this).visit(JavaParser.parse(file), null);
 		}
 		catch(IOException e)
 		{
 			JOptionPane.showMessageDialog(this, "Could not save to target location", "IO exception", JOptionPane.ERROR_MESSAGE);
 		}
+		catch(ParseException e)
+		{
+			e.printStackTrace();
+		}
+		this.repaint();
+	}
+	
+	void color(CursorRange range, Color c)
+	{
+		for(Line line : getText(range))
+			for(Character ch : line.characters())
+				ch.setFontColor(c);
 	}
 	
 	@Override
 	public void paintComponent(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D) g;
-		
+		System.out.println("here");
 		g2.setColor(Configuration.background);
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
@@ -179,6 +200,23 @@ public class Editor extends JComponent
 		return this;
 	}
 	
+	private List<Line> getText(CursorRange range)
+	{
+		List<Line> lines = new ArrayList<>();
+		if(range.getFirst().getRow() == range.getSecond().getRow())
+		{
+			lines.add(this.lines.get(range.getFirst().getRow()).subLine(range.getFirst().getCol(), range.getSecond().getCol()));
+		}
+		else
+		{
+			lines.add(this.lines.get(range.getFirst().getRow()).subLine(range.getFirst().getCol()));
+			for(int r = range.getFirst().getRow()+1; r < range.getSecond().getRow(); r++)
+				lines.add(this.lines.get(r));
+			lines.add(this.lines.get(range.getSecond().getRow()).subLine(0, range.getSecond().getCol()));
+		}
+		return lines;
+	}
+	
 	public Editor mark()
 	{
 		if(highlightStart == null)
@@ -201,7 +239,7 @@ public class Editor extends JComponent
 			for(char c : data.toCharArray())
 			{
 				if(c == '\n')
-					enter();
+					enter(true);
 				else
 					type(c);
 			}
@@ -243,17 +281,20 @@ public class Editor extends JComponent
 		return this;
 	}
 	
-	public Editor enter()
+	public Editor enter(boolean bracesAware)
 	{
-		int numOpenBraces = 0;
-		for(Line line : lines)
-			for(Character character : line.characters())
-				numOpenBraces += (character.getChar() == '{' ? 1 : (character.getChar() == '}' ? -1 : 0));
 		Line newLine = currentLine().splitAt(cursor.getCol());
 		lines.add(cursor.getRow() + 1, newLine);
 		down(1).home();
-		for(int count = 0; count < numOpenBraces; count++)
-			this.type('\t');
+		if(bracesAware)
+		{
+			int numOpenBraces = 0;
+			for(Line line : lines)
+				for(Character character : line.characters())
+					numOpenBraces += (character.getChar() == '{' ? 1 : (character.getChar() == '}' ? -1 : 0));
+			for(int count = 0; count < numOpenBraces; count++)
+				this.type('\t');
+		}
 		textUpdated();
 		return this;
 	}

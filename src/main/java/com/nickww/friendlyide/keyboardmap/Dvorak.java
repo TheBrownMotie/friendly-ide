@@ -49,7 +49,7 @@ public class Dvorak implements KeyboardMap
 		else if(keyCode == KeyEvent.VK_BACK_SPACE)
 			editor.backspace();
 		else if(keyCode == KeyEvent.VK_ENTER)
-			editor.enter();
+			editor.enter(true);
 		else if(control && keyCode == KeyEvent.VK_R)
 			editorsPane.open();
 		else if(control && keyCode == KeyEvent.VK_QUOTE)
