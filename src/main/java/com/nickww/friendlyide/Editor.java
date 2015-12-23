@@ -398,13 +398,31 @@ public class Editor extends JComponent
 	{
 		Line line = currentLine();
 		saverTimer.reset();
-		for(Character c : line.characters())
-			c.setFontColor(Color.BLACK);
+		for(Line l : lines)
+			for(Character c : l.characters())
+				c.setFontColor(Color.BLACK);
 		
 		for(Map.Entry<String, Color> entry : Configuration.keywordColors.entrySet())
 			for(int index : line.indicesOf(entry.getKey()))
 				for(int j = index; j < index + entry.getKey().length(); j++)
 					line.characters().get(j).setFontColor(entry.getValue());
+		
+		boolean inQuote = false;
+		for(Line l : lines)
+		{
+			for(Character c : l.characters())
+			{
+				if(c.getChar() == '"')
+				{
+					inQuote = !inQuote;
+					c.setFontColor(Color.GREEN.darker().darker());
+				}
+				else if(inQuote)
+				{
+					c.setFontColor(Color.GREEN);
+				}
+			}
+		}
 	}
 	
 	private boolean isAtBeginning()
