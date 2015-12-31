@@ -105,18 +105,18 @@ public class Editor extends JComponent
 	public void paintComponent(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D) g;
-		System.out.println("here");
 		g2.setColor(Configuration.background);
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
 		final int lineHeight = getLineHeight(g2) + 1;
 		final int maxDescent = Character.getMaxDescent(g2, Configuration.fontSize) - 1;
+		final int lineNumberMaxWidth = Character.getWidth(g2, Configuration.fontSize) * (Integer.toString(lines.size()) + " ").length();
 		
 		int y = lineHeight;
 		int row = 0;
 		for (Line line : lines)
 		{
-			int x = 0;
+			int x = lineNumberMaxWidth;
 			int col = 0;
 			for(Character character : line.characters())
 			{
@@ -128,10 +128,10 @@ public class Editor extends JComponent
 				col++;
 				x += charWidth;
 			}
-			
 			drawCursors(g2, x, y - lineHeight + maxDescent, lineHeight, new Cursor(row, col), cursor, highlightStart);
-			y += lineHeight;
 			row++;
+			g2.drawString(String.valueOf(row), 0, y);
+			y += lineHeight;
 		}
 	}
 	
